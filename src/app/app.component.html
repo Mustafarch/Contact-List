@@ -1,0 +1,71 @@
+<div class="container">
+  <h1 class="text-center">KİŞİ LİSTESİ</h1>
+
+  <!-- Arama Yeri ve Butonu -->
+  <div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="Ad-Soyad" [(ngModel)]="searchTerm" (keyup)="filterContacts()">
+    <div class="input-group-append" *ngIf="searchTerm || searchTerm.length > 0">
+      <span class="input-group-text" style="margin-left: 10px;">
+        <button class="btn btn-outline-secondary" type="button" (click)="clearFilter()">Filtreyi Temizle</button>
+      </span>
+    </div>
+  </div>
+
+  <!-- Sonuç Sayısını Göster -->
+  <div *ngIf="filteredContacts.length > 0 && searchTerm && searchTerm.length > 0" class="text-center bg-info rounded p-2">
+    <p style="font-weight: bold;">{{ filteredContacts.length }} sonuç bulundu.</p>
+  </div>
+
+  <!-- Kişiler Listesi -->
+  <div class="row justify-content-center">
+    <div class="col-md-6" *ngFor="let contact of getCurrentPageContacts(); let i = index">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title" style="font-size: 15px;"><strong>{{ contact.name }}</strong></h5>
+          <p class="card-text">Telefon: {{ contact.phone }}</p>
+          <p class="card-text">E-posta: {{ contact.email }}</p>
+          <button (click)="deleteContact(i)" class="btn btn-danger" style="width: 50%;">Kişiyi Sil</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kişi bulunamadı -->
+  <div *ngIf="filteredContacts.length === 0 && searchTerm && searchTerm.length > 0" class="text-center bg-warning rounded p-2">
+    <p style="font-weight: bold;">"{{ searchTerm }}" kişisi bulunamadı.</p>
+  </div>
+
+  <!-- Sayfalama -->
+  <div class="d-flex justify-content-center mt-3">
+    <nav aria-label="Page navigation">
+      <ul class="pagination">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <button class="page-link" (click)="changePage(currentPage - 1)" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </button>
+        </li>
+        <li class="page-item" *ngFor="let page of getPagesArray()" [class.active]="currentPage === page">
+          <button class="page-link" (click)="changePage(page)">{{ page }}</button>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages()">
+          <button class="page-link" (click)="changePage(currentPage + 1)" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <!--  Bildirim -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div *ngFor="let toast of toasts" class="toast" [class.show]="toast.isVisible" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <strong class="me-auto">Bildirim</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close" (click)="hideToast(toast)"></button>
+      </div>
+      <div class="toast-body">
+        Kişi başarıyla silindi.
+      </div>
+    </div>
+  </div>
+</div>
